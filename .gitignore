@@ -6,3 +6,4 @@ __pycache__/
 .venv/
 *.bag
 *.db3
+ros2_ws/src/ydlidar_ros2_driver/
