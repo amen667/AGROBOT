@@ -107,3 +107,49 @@ RViz did not show the laser points clearly even though `/scan` was active.
 
 ### Next Objective
 Use `/scan` with SLAM Toolbox to start building a map.
+## Day 4 - LiDAR verification and mobile base decision
+
+### Objective
+Verify that the LiDAR setup still works and decide the best mobile base for AGROBOT.
+
+### Work completed
+- Re-tested YDLIDAR X4 Pro.
+- Confirmed `/scan` is still working.
+- Opened RViz and confirmed the red LiDAR points appear correctly.
+- Tested SLAM Toolbox launch.
+- Observed that `/map` can appear, but real mapping is not valid yet because the robot does not have odometry.
+- Reviewed available motors and drivers.
+- Identified 4 × JGB37-550 12V 300RPM motors.
+- Decided not to use them for the first mapping version because they do not have encoders.
+- Identified old line follower motors: JGA25-371 12V 620RPM with built-in encoders.
+- Decided to use 2 encoder motors + ball wheel as AGROBOT v1 mobile base.
+
+### Important decision
+AGROBOT v1 will use a differential drive base:
+
+- Left JGA25-371 encoder motor
+- Right JGA25-371 encoder motor
+- Ball/caster wheel
+- ESP32 for motor control and encoder reading
+- BTS7960 motor drivers
+- YDLIDAR X4 Pro for `/scan`
+
+This setup is better for SLAM because the encoder motors can provide real wheel odometry.
+
+### Problems / notes
+- SLAM without odometry is not reliable.
+- The gray map in RViz did not really grow or update correctly.
+- Real mapping needs `/odom`.
+- Ultrasonic and GPS are not good odometry solutions for this indoor robot.
+- Wheel encoders are the correct solution.
+
+### Next steps
+- Bring the old line follower robot base.
+- Identify encoder motor wire colors.
+- Cable motors to BTS7960 drivers.
+- Cable encoder signals to ESP32.
+- Install Arduino IDE when the robot is available.
+- Upload ESP32 motor + encoder test firmware.
+- Test motor movement.
+- Test encoder pulse counting.
+- Later create ROS2 `/odom`.
