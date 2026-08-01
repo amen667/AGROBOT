@@ -153,3 +153,12 @@ This setup is better for SLAM because the encoder motors can provide real wheel 
 - Test motor movement.
 - Test encoder pulse counting.
 - Later create ROS2 `/odom`.
+## 2026-08-01 - Combined LiDAR and ROS2 Motor Control
+
+- YDLIDAR X4-Pro runs on Raspberry Pi and publishes `/scan`.
+- ESP32 motor controller runs through Raspberry USB serial.
+- ROS2 motor bridge subscribes to `/cmd_vel` and sends motor commands to ESP32.
+- `teleop_twist_keyboard` successfully controls the robot.
+- LiDAR and ESP32 work together on the Raspberry Pi.
+- Combined test validated: `/scan` stays active while motors are controlled from ROS2.
+
