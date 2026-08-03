@@ -5,19 +5,46 @@ import serial
 import sys
 
 def find_port():
-    ports = glob.glob("/dev/ttyUSB*") + glob.glob("/dev/ttyACM*")
-    ports = sorted(ports)
+    ports = sorted(glob.glob("/dev/ttyUSB*") + glob.glob("/dev/ttyACM*"))
     print("PORTS:", ports)
 
     if not ports:
-        raise SystemExit("NO ESP32 PORT FOUND")
+        raise SystemExit("NO USB SERIAL PORT FOUND")
 
-    if len(ports) > 1:
-        print("ERROR: More than one USB serial device.")
-        print("For this motor test, unplug LiDAR and keep ONLY ESP32 plugged.")
-        raise SystemExit
+    for port in ports:
+        print("Testing for ESP32:", port)
 
-    return ports[0]
+        try:
+            test = serial.Serial()
+            test.port = port
+            test.baudrate = 115200
+            test.timeout = 0.2
+            test.dtr = False
+            test.rts = False
+            test.open()
+
+            start_time = time.time()
+
+            while time.time() - start_time < 8:
+                raw = test.readline()
+
+                if b"AGROBOT" in raw or b"Commands:" in raw or b"L:" in raw:
+                    test.close()
+                    print("ESP32 FOUND:", port)
+                    return port
+
+                # Ask ESP32 to print/stop. LiDAR will ignore this.
+                test.write(b"s")
+                test.flush()
+                time.sleep(0.1)
+
+            test.close()
+
+        except Exception as e:
+            print("Could not test", port, e)
+
+    raise SystemExit("ESP32 NOT FOUND. Try pressing EN/RST on ESP32 and run again.")
+
 
 def open_esp32(port):
     print("OPENING:", port)
